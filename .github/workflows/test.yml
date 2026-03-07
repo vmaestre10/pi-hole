@@ -49,7 +49,7 @@ jobs:
         run: editorconfig-checker
 
       - name: Check python code formatting with black
-        uses: psf/black@6305bf1ae645ab7541be4f5028a86239316178eb #26.1.0
+        uses: psf/black@35ea67920b7f6ac8e09be1c47278752b1e827f76 #26.3.0
         with:
           src: "./test"
           options: "--check --diff --color"
