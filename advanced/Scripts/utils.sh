@@ -43,6 +43,57 @@ addOrEditKeyValPair() {
 }
 
 #######################
+# Safely loads key=value pairs from the Pi-hole versions cache file.
+# Unlike `source`, this function never executes file content as shell code.
+# Only known keys are assigned, and values are validated against a strict
+# character allowlist to prevent shell injection.
+#
+# Takes one argument: path to the versions file
+# Returns 1 if the file does not exist, 0 otherwise.
+# Example loadVersionFile "/etc/pihole/versions"
+#######################
+loadVersionFile() {
+  local file="${1}"
+  local line key value
+
+  [ -f "${file}" ] || return 1
+
+  while IFS= read -r line || [ -n "${line}" ]; do
+    # Skip blank lines and comments
+    case "${line}" in
+      ''|\#*) continue ;;
+    esac
+
+    # Require KEY=VALUE format (key must be non-empty)
+    key="${line%%=*}"
+    value="${line#*=}"
+    [ -z "${key}" ] && continue
+    [ "${key}" = "${line}" ] && continue  # no '=' found
+
+    # Allowlist: only assign known version-file keys
+    case "${key}" in
+      CORE_VERSION|CORE_BRANCH|CORE_HASH|\
+      GITHUB_CORE_VERSION|GITHUB_CORE_HASH|\
+      WEB_VERSION|WEB_BRANCH|WEB_HASH|\
+      GITHUB_WEB_VERSION|GITHUB_WEB_HASH|\
+      FTL_VERSION|FTL_BRANCH|FTL_HASH|\
+      GITHUB_FTL_VERSION|GITHUB_FTL_HASH|\
+      DOCKER_VERSION|GITHUB_DOCKER_VERSION) ;;
+      *) continue ;;
+    esac
+
+    # Validate value: allow only characters safe in version strings and branch names.
+    # Permits: letters, digits, dot, hyphen, underscore, slash, plus sign, and empty string.
+    case "${value}" in
+      *[!a-zA-Z0-9._/+\-]*) continue ;;
+    esac
+
+    # Safe to assign: key is from the allowlist, value contains no shell metacharacters
+    eval "${key}=\${value}"
+  done < "${file}"
+}
+
+#######################
 # returns FTL's PID based on the content of the pihole-FTL.pid file
 #
 # Takes one argument: path to pihole-FTL.pid
