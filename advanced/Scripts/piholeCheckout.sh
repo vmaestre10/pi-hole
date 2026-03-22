@@ -187,8 +187,7 @@ checkout() {
         echo -e "  ${INFO} Checking for ${COL_YELLOW}${binary}${COL_NC} binary on https://ftl.pi-hole.net"
 
         local download_status
-        check_download_exists "$path"
-        download_status=$?
+        check_download_exists "$path" && download_status=0 || download_status=$?
         if [ $download_status -eq 0 ]; then
             echo "  ${TICK} Binary exists"
             echo "${2}" > /etc/pihole/ftlbranch

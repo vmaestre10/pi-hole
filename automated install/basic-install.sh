@@ -2042,8 +2042,7 @@ FTLcheckUpdate() {
 
         # Check whether or not the binary for this FTL branch actually exists. If not, then there is no update!
         local status
-        check_download_exists "${path}"
-        status=$?
+        check_download_exists "${path}" && status=0 || status=$?
         if [ "${status}" -ne 0 ]; then
             if [ "${status}" -eq 1 ]; then
                 printf "  %b Branch \"%s\" is not available.\\n" "${INFO}" "${ftlBranch}"
