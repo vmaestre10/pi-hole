@@ -49,14 +49,14 @@ addOrEditKeyValPair() {
 # character allowlist to prevent shell injection.
 #
 # Takes one argument: path to the versions file
-# Returns 1 if the file does not exist, 0 otherwise.
+# Returns 0 in all cases (compatible with set -e)
 # Example loadVersionFile "/etc/pihole/versions"
 #######################
 loadVersionFile() {
   local file="${1}"
   local line key value
 
-  [ -f "${file}" ] || return 1
+  [ -f "${file}" ] || return 0
 
   while IFS= read -r line || [ -n "${line}" ]; do
     # Skip blank lines and comments
