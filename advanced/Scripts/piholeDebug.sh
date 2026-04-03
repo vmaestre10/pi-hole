@@ -41,8 +41,10 @@ else
     #OVER="\r\033[K"
 fi
 
-# shellcheck source=/dev/null
-. /etc/pihole/versions
+# shellcheck source=./advanced/Scripts/utils.sh
+source /opt/pihole/utils.sh
+
+loadVersionFile /etc/pihole/versions
 
 # Read the value of an FTL config key. The value is printed to stdout.
 get_ftl_conf_value() {
@@ -169,7 +171,7 @@ initialize_debug() {
     # Display that the debug process is beginning
     log_write "${COL_PURPLE}*** [ INITIALIZING ]${COL_NC}"
     # Timestamp the start of the log
-    log_write "${INFO} $(date "+%Y-%m-%d:%H:%M:%S") debug log has been initialized."
+    log_write "${INFO} $(date "+%Y-%m-%d %H:%M:%S") debug log has been initialized."
     # Uptime of the system
     # credits to https://stackoverflow.com/questions/28353409/bash-format-uptime-to-show-days-hours-minutes
     system_uptime=$(uptime | awk -F'( |,|:)+' '{if ($7=="min") m=$6; else {if ($7~/^day/){if ($9=="min") {d=$6;m=$8} else {d=$6;h=$8;m=$9}} else {h=$6;m=$7}}} {print d+0,"days,",h+0,"hours,",m+0,"minutes"}')

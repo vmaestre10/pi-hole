@@ -2042,8 +2042,8 @@ FTLcheckUpdate() {
 
         # Check whether or not the binary for this FTL branch actually exists. If not, then there is no update!
         local status
-        if ! check_download_exists "${path}"; then
-            status=$?
+        check_download_exists "${path}" && status=0 || status=$?
+        if [ "${status}" -ne 0 ]; then
             if [ "${status}" -eq 1 ]; then
                 printf "  %b Branch \"%s\" is not available.\\n" "${INFO}" "${ftlBranch}"
                 printf "  %b Use %bpihole checkout ftl [branchname]%b to switch to a valid branch.\\n" "${INFO}" "${COL_GREEN}" "${COL_NC}"
