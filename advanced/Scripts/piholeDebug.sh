@@ -41,8 +41,10 @@ else
     #OVER="\r\033[K"
 fi
 
-# shellcheck source=/dev/null
-. /etc/pihole/versions
+# shellcheck source=./advanced/Scripts/utils.sh
+source /opt/pihole/utils.sh
+
+loadVersionFile /etc/pihole/versions
 
 # Read the value of an FTL config key. The value is printed to stdout.
 get_ftl_conf_value() {
